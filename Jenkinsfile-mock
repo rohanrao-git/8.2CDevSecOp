@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+
+    triggers {
+        pollSCM('H/2 * * * *')
+    }
+
+    stages {
+        stage('Stage 1: Build') {
+            steps {
+                echo 'Task: Compile and package application code'
+                echo 'Tool: Maven (alternative: Gradle)'
+            }
+        }
+
+        stage('Stage 2: Unit and Integration Tests') {
+            steps {
+                echo 'Task: Run unit tests and integration tests'
+                echo 'Tool: JUnit + Mockito (unit), Postman/Newman or Testcontainers (integration)'
+            }
+        }
+
+        stage('Stage 3: Code Analysis') {
+            steps {
+                echo 'Task: Static code quality analysis and code smell detection'
+                echo 'Tool: SonarQube'
+            }
+        }
+
+        stage('Stage 4: Security Scan') {
+            steps {
+                echo 'Task: Scan dependencies/source for vulnerabilities'
+                echo 'Tool: OWASP Dependency-Check or Snyk'
+            }
+        }
+
+        stage('Stage 5: Deploy to Staging') {
+            steps {
+                echo 'Task: Deploy build artifact to staging server'
+                echo 'Tool: AWS EC2 (via SSH, Ansible, or Docker)'
+            }
+        }
+
+        stage('Stage 6: Integration Tests on Staging') {
+            steps {
+                echo 'Task: Validate full app behavior in staging environment'
+                echo 'Tool: Postman/Newman, Cypress, or Selenium'
+            }
+        }
+
+        stage('Stage 7: Deploy to Production') {
+            steps {
+                echo 'Task: Deploy verified release to production server'
+                echo 'Tool: AWS EC2 (with blue/green or rolling deployment)'
+            }
+        }
+    }
+}
