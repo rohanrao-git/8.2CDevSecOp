@@ -212,3 +212,8 @@ snyk wizard
 
 In this application, the default `snyk wizard` answers will fix all the issues.
 When the wizard is done, restart the application and run the exploits again to confirm they are fixed.
+
+
+MAKE CHANGES BELOW TO TRIGGER PIPELINE WHENEVER YOU WANT:
+
+Hello world, welcome user Rohannn
