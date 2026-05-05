@@ -216,4 +216,4 @@ When the wizard is done, restart the application and run the exploits again to c
 
 MAKE CHANGES BELOW TO TRIGGER PIPELINE WHENEVER YOU WANT:
 
-Hello world, welcome user Rohannn
+Take 2
