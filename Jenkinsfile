@@ -2,8 +2,6 @@ pipeline {
     agent any
     environment {
         EMAIL_RECIPIENT = 'rohanraoa@gmail.com'
-        TEST_STAGE_STATUS = 'NOT_RUN'
-        SECURITY_STAGE_STATUS = 'NOT_RUN'
     }
 
     triggers {
@@ -31,19 +29,20 @@ pipeline {
                     def testExitCode = dir('nodejs-goof') {
                         sh(script: 'npm test', returnStatus: true)
                     }
-                    env.TEST_STAGE_STATUS = (testExitCode == 0) ? 'SUCCESS' : 'FAILURE'
-                    echo "Run Tests stage status: ${env.TEST_STAGE_STATUS}"
+                    if (testExitCode != 0) {
+                        unstable('Run Tests failed')
+                    }
                 }
             }
             post {
                 always {
                     emailext(
                         to: "${EMAIL_RECIPIENT}",
-                        subject: "Jenkins ${env.JOB_NAME} #${env.BUILD_NUMBER} - Run Tests: ${env.TEST_STAGE_STATUS}",
+                        subject: "Jenkins ${env.JOB_NAME} #${env.BUILD_NUMBER} - Run Tests: ${currentBuild.currentResult}",
                         body: """Stage: Run Tests
 Job: ${env.JOB_NAME}
 Build: #${env.BUILD_NUMBER}
-Result: ${env.TEST_STAGE_STATUS}
+Result: ${currentBuild.currentResult}
 URL: ${env.BUILD_URL}""",
                         attachLog: true
                     )
@@ -65,19 +64,20 @@ URL: ${env.BUILD_URL}""",
                     def auditExitCode = dir('nodejs-goof') {
                         sh(script: 'npm audit', returnStatus: true)
                     }
-                    env.SECURITY_STAGE_STATUS = (auditExitCode == 0) ? 'SUCCESS' : 'FAILURE'
-                    echo "Security Scan stage status: ${env.SECURITY_STAGE_STATUS}"
+                    if (auditExitCode != 0) {
+                        unstable('Security Scan found issues')
+                    }
                 }
             }
             post {
                 always {
                     emailext(
                         to: "${EMAIL_RECIPIENT}",
-                        subject: "Jenkins ${env.JOB_NAME} #${env.BUILD_NUMBER} - Security Scan: ${env.SECURITY_STAGE_STATUS}",
+                        subject: "Jenkins ${env.JOB_NAME} #${env.BUILD_NUMBER} - Security Scan: ${currentBuild.currentResult}",
                         body: """Stage: NPM Audit (Security Scan)
 Job: ${env.JOB_NAME}
 Build: #${env.BUILD_NUMBER}
-Result: ${env.SECURITY_STAGE_STATUS}
+Result: ${currentBuild.currentResult}
 URL: ${env.BUILD_URL}""",
                         attachLog: true
                     )
